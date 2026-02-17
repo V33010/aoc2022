@@ -2,11 +2,11 @@ pub fn run(input: &str) {
     let lines: Vec<&str> = input.lines().filter(|l| !l.is_empty()).collect();
 
     // println!("{:?}", lines);
-    let mut total_score_part1: i32 = 0;
+    let mut _total_score_part1: i32 = 0;
     for item in lines.clone() {
         let round_score: i32 = calculate_round_score_part1(item);
         // println!("round score: {}", round_score);
-        total_score_part1 += round_score;
+        _total_score_part1 += round_score;
     }
     // println!("part1: {}", total_score);
 
