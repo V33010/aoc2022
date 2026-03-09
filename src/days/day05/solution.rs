@@ -3,19 +3,73 @@ pub fn run(input: &str) {
 
     // println!("{:?}", lines);
     let (stacks, steps) = parse_input(lines);
+    println!("stacks:");
     print_stacks(stacks.clone());
     println!("");
-    // print_steps(steps.clone());
+    println!("steps:");
+    print_steps(steps.clone());
     println!("");
     let parsed_steps = parse_steps(steps);
-    // print_parsed_steps(parsed_steps);
+    println!("parsed_steps:");
+    print_parsed_steps(parsed_steps.clone());
+    println!("");
     let gathered_stacks = gather_stacks(stacks);
+    println!("gathered_stacks:");
     print_gathered_stacks(gathered_stacks.clone());
     let inverted_stacks = invert_matrix(gathered_stacks);
+    println!("");
 
-    for line in inverted_stacks {
+    println!("line in inverted_stacks:");
+    for line in inverted_stacks.clone() {
         println!("{:?}", line);
     }
+    let output_matrix = comply_all_steps(inverted_stacks, parsed_steps);
+    println!("line in output_matrix");
+    for line in output_matrix {
+        println!("{:?}", line);
+    }
+}
+
+fn comply_once(loc_from: i32, loc_to: i32, mut input_matrix: Vec<Vec<char>>) -> Vec<Vec<char>> {
+    let loc_from_as_idx: usize = loc_from as usize;
+    let loc_to_as_idx: usize = loc_to as usize;
+    if !input_matrix[loc_from_as_idx].is_empty() {
+        let popped_elem: char = input_matrix[loc_from_as_idx].remove(0);
+        input_matrix[loc_to_as_idx].insert(0, popped_elem);
+    }
+    for line in input_matrix.clone() {
+        println!("{:?}", line);
+    }
+    println!("");
+    input_matrix
+}
+
+fn comply_step(
+    loc_from: i32,
+    loc_to: i32,
+    mut input_matrix: Vec<Vec<char>>,
+    iters: i32,
+) -> Vec<Vec<char>> {
+    for _i in 0..iters {
+        input_matrix = comply_once(loc_from, loc_to, input_matrix);
+    }
+
+    input_matrix
+}
+
+fn comply_all_steps(
+    mut input_matrix: Vec<Vec<char>>,
+    parsed_steps: Vec<Vec<i32>>,
+) -> Vec<Vec<char>> {
+    let length: i32 = parsed_steps.len() as i32;
+    for i in 0..length {
+        let i_as_idx = i as usize;
+        let iters = parsed_steps[i_as_idx][0];
+        let loc_from = parsed_steps[i_as_idx][1] - 1;
+        let loc_to = parsed_steps[i_as_idx][2] - 1;
+        input_matrix = comply_step(loc_from, loc_to, input_matrix, iters)
+    }
+    input_matrix
 }
 
 fn parse_input(lines: Vec<&str>) -> (Vec<&str>, Vec<&str>) {
@@ -31,9 +85,9 @@ fn parse_input(lines: Vec<&str>) -> (Vec<&str>, Vec<&str>) {
 
 fn invert_matrix(input_matrix: Vec<Vec<char>>) -> Vec<Vec<char>> {
     let height = input_matrix.len();
-    println!("height: {}", height);
+    // println!("height: {}", height);
     let width = input_matrix[0].len();
-    println!("width: {}", width);
+    // println!("width: {}", width);
     let mut output: Vec<Vec<char>> = vec![vec![]];
     for i in 0..height {
         let mut temp: Vec<char> = vec![];
@@ -42,14 +96,14 @@ fn invert_matrix(input_matrix: Vec<Vec<char>>) -> Vec<Vec<char>> {
         }
         output.push(temp);
     }
-    output
+    output[1..].to_vec()
 }
 
 fn gather_stacks(stacks: Vec<&str>) -> Vec<Vec<char>> {
     let width = stacks[0].len() as i32;
     let total_horizontal = (width + 1) / 3;
-    println!("total_horizontal: {}", total_horizontal);
-    println!("width: {}", width);
+    // println!("total_horizontal: {}", total_horizontal);
+    // println!("width: {}", width);
     let mut intermediate: Vec<Vec<char>> = vec![vec![]];
     for line in stacks {
         let line_chars: Vec<char> = line.chars().collect();
