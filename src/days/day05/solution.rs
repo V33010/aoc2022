@@ -1,7 +1,7 @@
 pub fn run(input: &str) {
     let lines: Vec<&str> = input.lines().collect();
 
-    // println!("{:?}", lines);
+    println!("{:?}", lines);
     let (stacks, steps) = parse_input(lines);
     println!("stacks:");
     print_stacks(stacks.clone());
@@ -10,24 +10,60 @@ pub fn run(input: &str) {
     print_steps(steps.clone());
     println!("");
     let parsed_steps = parse_steps(steps);
-    println!("parsed_steps:");
-    print_parsed_steps(parsed_steps.clone());
-    println!("");
+    // println!("parsed_steps:");
+    // print_parsed_steps(parsed_steps.clone());
+    // println!("");
     let gathered_stacks = gather_stacks(stacks);
-    println!("gathered_stacks:");
-    print_gathered_stacks(gathered_stacks.clone());
+    // println!("gathered_stacks:");
+    // print_gathered_stacks(gathered_stacks.clone());
     let inverted_stacks = invert_matrix(gathered_stacks);
-    println!("");
+    // println!("");
+    //
+    // println!("line in inverted_stacks:");
+    // for line in inverted_stacks.clone() {
+    //     println!("{:?}", line);
+    // }
+    let refactored_stacks = refactor_stacks(inverted_stacks);
+    let output_matrix = comply_all_steps(refactored_stacks, parsed_steps);
+    let tops = get_tops(output_matrix.clone());
+    let tops_string = get_tops_string(tops.clone());
+    // println!("line in output_matrix");
+    // for line in output_matrix {
+    //     println!("{:?}", line);
+    // }
+    // println!("tops: {:?}", tops);
+    println!("tops_string: {}", tops_string);
+}
 
-    println!("line in inverted_stacks:");
-    for line in inverted_stacks.clone() {
-        println!("{:?}", line);
+fn get_tops(input_matrix: Vec<Vec<char>>) -> Vec<char> {
+    let mut output: Vec<char> = vec![];
+    for item in input_matrix {
+        output.push(item[0]);
     }
-    let output_matrix = comply_all_steps(inverted_stacks, parsed_steps);
-    println!("line in output_matrix");
-    for line in output_matrix {
-        println!("{:?}", line);
+    output
+}
+
+fn get_tops_string(tops: Vec<char>) -> String {
+    tops.into_iter().collect()
+}
+
+fn remove_blanks(stack: Vec<char>) -> Vec<char> {
+    let mut output_stack: Vec<char> = vec![];
+    for item in stack {
+        match item {
+            ' ' => {}
+            _ => output_stack.push(item),
+        }
     }
+    output_stack
+}
+
+fn refactor_stacks(inverted_stacks: Vec<Vec<char>>) -> Vec<Vec<char>> {
+    let mut output_stacks: Vec<Vec<char>> = vec![];
+    for item in inverted_stacks {
+        output_stacks.push(remove_blanks(item));
+    }
+    output_stacks
 }
 
 fn comply_once(loc_from: i32, loc_to: i32, mut input_matrix: Vec<Vec<char>>) -> Vec<Vec<char>> {
@@ -37,10 +73,10 @@ fn comply_once(loc_from: i32, loc_to: i32, mut input_matrix: Vec<Vec<char>>) -> 
         let popped_elem: char = input_matrix[loc_from_as_idx].remove(0);
         input_matrix[loc_to_as_idx].insert(0, popped_elem);
     }
-    for line in input_matrix.clone() {
-        println!("{:?}", line);
-    }
-    println!("");
+    // for line in input_matrix.clone() {
+    //     println!("{:?}", line);
+    // }
+    // println!("");
     input_matrix
 }
 
@@ -89,9 +125,9 @@ fn invert_matrix(input_matrix: Vec<Vec<char>>) -> Vec<Vec<char>> {
     let width = input_matrix[0].len();
     // println!("width: {}", width);
     let mut output: Vec<Vec<char>> = vec![vec![]];
-    for i in 0..height {
+    for i in 0..width {
         let mut temp: Vec<char> = vec![];
-        for j in 0..width {
+        for j in 0..height {
             temp.push(input_matrix[j][i])
         }
         output.push(temp);
